@@ -21,7 +21,7 @@ class LibrosController extends Controller {
     public function crearLibro(Request $request) {
         $year = $request->input('año_publicacion');
         // Comprobación de que el año introducido es correcto
-        if (is_int($year) && Str::lenght($year) == 4) {
+        if (is_numeric($year) && Str::length($year) == 4) {
             $id_libro = Libro::create($request);
             return Redirect::to('/mostrarLibros');
         } else {
