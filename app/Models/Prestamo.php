@@ -5,16 +5,26 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
-
 use Illuminate\Http\Request;
+use App\Models\Libro;
+use App\Models\User;
 
 class Prestamo extends Model {
     use HasFactory;
 
+    public function libro() {
+        return $this->belongsTo(Libro::class, 'book_id');
+    }
+
+    public function usuario() {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
     public static function getAll() {
         $prestamos = DB::table('prestamos')
                         ->join('libros', 'libros.id', '=', 'prestamos.book_id')
-                        ->select('prestamos.id', 'libros.id as libro_id', 'libros.titulo', 'prestamos.user', 'prestamos.fecha_prestamo', 'prestamos.fecha_devolucion')
+                        ->join('users', 'users.id', '=', 'prestamos.user_id')
+                        ->select('prestamos.id', 'libros.id as libro_id', 'libros.titulo', 'users.id as user_id', 'users.name as user_name', 'prestamos.fecha_prestamo', 'prestamos.fecha_devolucion')
                         ->get();
         return $prestamos;
     }
@@ -23,7 +33,7 @@ class Prestamo extends Model {
         $prestamo = new Prestamo();
         $prestamo->book_id = $request->input('id_libro');
         $prestamo->fecha_prestamo = date('Y-m-d', strtotime($request->input('fecha_prestamo'))); 
-        $prestamo->user = $request->input('usuario');
+        $prestamo->user_id = $request->input('id_user');
         $prestamo->save(); 
 
         return $prestamo->id;
@@ -32,8 +42,9 @@ class Prestamo extends Model {
     public static function buscarPrestamoId($id) {
         $prestamo = DB::table('prestamos')
                         ->join('libros', 'libros.id', '=', 'prestamos.book_id')
+                        ->join('users', 'users.id', '=', 'prestamos.user_id')
                         ->where('prestamos.id', '=', $id)
-                        ->select('prestamos.id', 'libros.id as libro_id', 'libros.titulo', 'prestamos.user', 'prestamos.fecha_prestamo', 'prestamos.fecha_devolucion')
+                        ->select('prestamos.id', 'libros.id as libro_id', 'libros.titulo', 'users.id as user_id', 'users.name as user_name', 'prestamos.fecha_prestamo', 'prestamos.fecha_devolucion')
                         ->get();
 
         return $prestamo[0];
@@ -54,13 +65,14 @@ class Prestamo extends Model {
 
         $query = DB::table('prestamos')
                 ->join('libros', 'libros.id', '=', 'prestamos.book_id')
-                ->select('prestamos.id', 'libros.id as libro_id', 'libros.titulo', 'prestamos.user', 'prestamos.fecha_prestamo', 'prestamos.fecha_devolucion');
+                ->join('users', 'users.id', '=', 'prestamos.user_id')
+                ->select('prestamos.id', 'libros.id as libro_id', 'libros.titulo', 'users.id as user_id', 'users.name as user_name', 'prestamos.fecha_prestamo', 'prestamos.fecha_devolucion');
 
         if ($titulo) {
             $query->where('libros.titulo', 'LIKE', '%'.$titulo.'%');
         }
         if ($usuario) {
-            $query->where('prestamos.user', 'LIKE', '%'.$usuario.'%');
+            $query->where('prestamos.user_id', 'LIKE', '%'.$usuario.'%'); // REVISAR
         }
         if ($fecha_prestamo_desde) {
             $fecha_desde = strtotime($fecha_prestamo_desde);

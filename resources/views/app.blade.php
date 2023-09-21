@@ -9,7 +9,11 @@
     <title>@yield('title')</title>
 </head>
 <body>
-    <div class="px-72 py-24">
+    {{-- @include('nav') --}}
+    @livewire('navigation-menu')
+    
+    {{-- <div class="px-72 py-24"> --}}
+    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         @yield('content')
     </div>
 </body>

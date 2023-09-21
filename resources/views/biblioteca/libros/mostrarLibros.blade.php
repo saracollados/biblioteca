@@ -4,26 +4,38 @@
 
 @section('content')
     <div class="mb-28 flex justify-between">
-        <div>
-            <a href="/crearLibroForm">
-                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded  mr-4">
-                    <i class="fa fa-plus mr-2" aria-hidden="true"></i>Añadir libro
-                </button>
-            </a>
-            <a href="/mostrarPrestamos">
-                <button class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">
-                    </i>Ver Préstamos
-                </button>
-            </a>
+        <div class="flex">
+            @auth          
+                @if (auth()->user() != null && auth()->user()->role == 'admin')
+                    <a href="/crearLibroForm">
+                        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-4 flex">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="1em" class="mt-1 mr-2" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><style>svg{fill:#ffffff}</style><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"/></svg>
+                            Añadir libro
+                        </button>
+                    </a>
+                @endif
+                <a href="/mostrarPrestamos">
+                    <button class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">
+                        </i>Ver Préstamos
+                    </button>
+                </a>
+            @endauth
         </div>
         <div>
             <a href="/mostrarLibros">
-                <button class="bg-amber-500 hover:bg-amber-700 text-white font-bold py-2 px-4 rounded">
-                    <i class="fa fa-times mr-2" aria-hidden="true"></i>Eliminar filtros
+                <button class="bg-amber-500 hover:bg-amber-700 text-white font-bold py-2 px-4 rounded flex">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="1em" class="mt-1 mr-2" viewBox="0 0 384 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><style>svg{fill:#ffffff}</style><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>
+                    Eliminar filtros
                 </button>
             </a>
         </div>
     </div>
+
+    @if (isset($errorMessage))
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-10" role="alert">
+            <span class="block sm:inline">{{$errorMessage}}</span>
+        </div>
+    @endif
 
     <div class="mb-12">
         <form action="{{route('filtrarLibros')}}" method="post" autocomplete="off">

@@ -5,11 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
-
 use Illuminate\Http\Request;
+use App\Models\Prestamos;
 
 class Libro extends Model {
     use HasFactory;
+
+    public function prestamos() {
+        return $this->belongsTo(Prestamos::class, 'book_id');
+    }
 
     public static function getAll() {
         return Libro::orderBy('titulo')->get();
